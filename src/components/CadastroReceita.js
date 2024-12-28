@@ -99,78 +99,92 @@ const CadastroReceita = () => {
         e.preventDefault();
         
         try {
-            // 1. First, create the Pessoa record for the patient
+
             const pessoaData = {
                 nome: formData.paciente.nome,
                 cpf: formData.paciente.cpf,
                 dataNascimento: formData.paciente.dataNascimento,
                 // Add other required Pessoa fields
+
             };
-            
+
+            // 1. Create Pessoa
             const pessoaResponse = await axios.post('http://localhost:8080/pessoa/cadastrarPessoa', pessoaData);
-            console.log(pessoaData)
-
-            if (!pessoaResponse.data) {
-                throw new Error('Failed to create Pessoa record');
-            }
-
-            // 2. Create the Paciente record
-            const pessoaCriada = pessoaResponse.data;
-            console.log('Pessoa criada:', pessoaCriada);
-
-            // 2. Criar Paciente
+            const pessoaCriada = pessoaResponse.data; // Now will contain the actual Pessoa object
+            
+            console.log("PESSOA", pessoaCriada)
+            // 2. Create Paciente with the created Pessoa
             const pacienteData = {
                 plano: formData.paciente.planoSaude,
-                pessoa: pessoaCriada
+                pessoa: pessoaCriada // Now this will have the actual Pessoa object with ID
             };
+            console.log("IDDDDDD",formData.paciente.planoSaude)
             
             const pacienteResponse = await axios.post('http://localhost:8080/paciente/cadastrarPacientes', pacienteData);
-            console.log(pacienteData)
+            
 
             if (!pacienteResponse.data) {
                 throw new Error('Failed to create Paciente record');
             }
 
-            // 3. Fetch the Medico record using CRM
-            const medicoResponse = await axios.get(`http://localhost:8080/medicos/findMedico?crm=${formData.medico.crm}`);
-        
-
-            if (!medicoResponse.data) {
-                throw new Error('Failed to fetch Medico record');
-            }
-
-            // 4. Create ItemReceita with medicamento details
+            const pacienteCriado = pacienteResponse.data;
+    
             const itemReceitaData = {
-                medicamento: {
-                    id: formData.medicamento.id
-                },
                 quantidade: formData.medicamento.quantidade,
                 dosagem: formData.medicamento.dosagem,
-                observacoes: formData.medicamento.observacoes
+                observacoes: formData.medicamento.observacoes,
+                viaDeAdministracao: formData.medicamento.viaAdministracao
             };
 
-            // 5. Finally, create the Receita
+            // 3. Create ItemReceita
+            const itemReceitaResponse = await axios.post('http://localhost:8080/itemReceita/cadastrarItemReceita', itemReceitaData);
+            const itemReceitaCriado = itemReceitaResponse.data;
+
+            if (!itemReceitaResponse.data) {
+                throw new Error('Failed to create ItemReceita record');
+            }
+    
+            const medicoResponse = await axios.get(`http://localhost:8080/medicos/findMedico?crm=${formData.medico.crm}`);
+            const medicoCriado = medicoResponse.data;
+
+            if (!medicoResponse.data) {
+                throw new Error('Failed to create medicoResponse record');
+            }
+    
+            
+            // 4. Create Receita with proper references
             const receitaData = {
                 data: new Date(),
-                medicamento: formData.medicamento,
-                medico: medicoResponse.data,
-                paciente: pacienteResponse.data,
-                itemReceita: itemReceitaData
+                medicamento: { id: formData.medicamento.id },
+                medico: { id: medicoCriado.id },
+                paciente: { id: pacienteCriado.id },
+                itemReceita: { id: itemReceitaCriado.id }
             };
 
+            console.log("Medicamento ID:", formData.medicamento.id);
+            console.log("Medico ID:", medicoResponse.data.id);
+            console.log("Paciente ID:", pacienteCriado.id);
+            console.log("ItemReceita ID:", itemReceitaCriado.id);
+
             const receitaResponse = await axios.post('http://localhost:8080/receita/cadastrarReceita', receitaData);
-            console.log(receitaData)
-            
+            console.log("RECEITA",receitaResponse)
             if (receitaResponse.data) {
                 alert('Receita cadastrada com sucesso!');
-                // Reset form or redirect
-            } else {
-                throw new Error('Failed to create Receita');
             }
-
         } catch (error) {
-            console.error('Erro ao processar cadastro:', error);
-            alert(`Erro ao cadastrar receita: ${error.message}`);
+            if (error.response) {
+                // O servidor respondeu com um status de erro
+                console.error('Erro de resposta:', error.response.data);
+                alert(`Erro do servidor: ${error.response.data}`);
+            } else if (error.request) {
+                // A requisição foi feita mas não houve resposta
+                console.error('Erro de rede:', error.request);
+                alert('Erro de conexão com o servidor. Verifique se o backend está rodando.');
+            } else {
+                // Algo aconteceu na configuração da requisição
+                console.error('Erro:', error.message);
+                alert(`Erro ao processar requisição: ${error.message}`);
+            }
         }
     };
 
@@ -198,7 +212,7 @@ const CadastroReceita = () => {
                             <select id="health-plan" name="planoSaude" onChange={(e) => handleInputChange(e, 'paciente')} required>
                                 <option value="">Selecione um plano de saúde</option>
                                 {planosSaude.map(plano => (
-                                    <option key={plano.id} value={plano.nome}>{plano.nome}</option>
+                                    <option key={plano.id} value={plano.id}>{plano.nome}</option>
                                 ))}
                             </select>
                         </div>
@@ -246,7 +260,7 @@ const CadastroReceita = () => {
                                     <input
                                         type="text"
                                         id="dosage"
-                                        name="dosagen"
+                                        name="dosagem"
                                         onChange={(e) => handleInputChange(e, 'medicamento')}
                                         required
                                     />
