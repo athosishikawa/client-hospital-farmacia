@@ -104,20 +104,24 @@ const CadastroReceita = () => {
                 nome: formData.paciente.nome,
                 cpf: formData.paciente.cpf,
                 dataNascimento: formData.paciente.dataNascimento,
-                // Add other required Pessoa fields
 
             };
 
             // 1. Create Pessoa
             const pessoaResponse = await axios.post('http://localhost:8080/pessoa/cadastrarPessoa', pessoaData);
-            const pessoaCriada = pessoaResponse.data; // Now will contain the actual Pessoa object
+            const pessoaCriada = pessoaResponse.data; 
             
             console.log("PESSOA", pessoaCriada)
             // 2. Create Paciente with the created Pessoa
             const pacienteData = {
-                plano: formData.paciente.planoSaude,
-                pessoa: pessoaCriada // Now this will have the actual Pessoa object with ID
+                plano: { id: formData.paciente.planoSaude },
+                pessoa: pessoaCriada 
             };
+
+            console.log("Plan ID being sent:", formData.paciente.planoSaude);
+            console.log("Full pacienteData:", pacienteData);
+
+
             console.log("IDDDDDD",formData.paciente.planoSaude)
             
             const pacienteResponse = await axios.post('http://localhost:8080/paciente/cadastrarPacientes', pacienteData);
