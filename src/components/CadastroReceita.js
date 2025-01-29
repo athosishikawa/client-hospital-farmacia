@@ -159,16 +159,15 @@ const CadastroReceita = () => {
             // 4. Create Receita with proper references
             const receitaData = {
                 data: new Date(),
-                medicamento: { id: formData.medicamento.id },
-                medico: { id: medicoCriado.id },
-                paciente: { id: pacienteCriado.id },
-                itemReceita: { id: itemReceitaCriado.id }
+                medicamento: medicamentos.find(m => m.id === formData.medicamento.id),
+                medico: medicoCriado,
+                paciente: pacienteCriado,
+                itemReceita: itemReceitaCriado
             };
+            console.log("MEDICO:", medicoCriado);
 
-            console.log("Medicamento ID:", formData.medicamento.id);
-            console.log("Medico ID:", medicoResponse.data.id);
-            console.log("Paciente ID:", pacienteCriado.id);
-            console.log("ItemReceita ID:", itemReceitaCriado.id);
+            console.log("RECEITA:", receitaData);
+            
 
             const receitaResponse = await axios.post('http://localhost:8080/receita/cadastrarReceita', receitaData);
             console.log("RECEITA",receitaResponse)

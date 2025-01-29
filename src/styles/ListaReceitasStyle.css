@@ -1,0 +1,140 @@
+.prescription-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .prescription-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .prescription-header {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .prescription-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .prescription-content {
+    padding: 20px;
+  }
+  
+  .loading-message,
+  .error-message,
+  .no-data {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .error-message {
+    color: #dc3545;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .prescription-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .prescription-table th,
+  .prescription-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .prescription-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .prescription-table tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .patient-info,
+  .doctor-info {
+    margin: 0;
+  }
+  
+  .name {
+    font-weight: 600;
+    margin: 0 0 5px 0;
+  }
+  
+  .details {
+    font-size: 14px;
+    color: #666;
+    margin: 2px 0;
+  }
+  
+  .no-plan {
+    color: #666;
+    font-style: italic;
+  }
+  
+  .medications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .medication-item {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .medication-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .med-name {
+    font-weight: 600;
+    margin: 0 0 5px 0;
+  }
+  
+  .med-details {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+  
+  .med-obs {
+    font-size: 14px;
+    color: #666;
+    margin: 2px 0;
+    font-style: italic;
+  }
+  
+  @media (max-width: 768px) {
+    .prescription-container {
+      padding: 10px;
+    }
+    
+    .prescription-table th,
+    .prescription-table td {
+      padding: 8px;
+    }
+    
+    .name {
+      font-size: 14px;
+    }
+    
+    .details,
+    .med-details,
+    .med-obs {
+      font-size: 12px;
+    }
+  }
